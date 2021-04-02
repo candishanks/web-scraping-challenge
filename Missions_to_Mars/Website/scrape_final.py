@@ -1,5 +1,8 @@
-from splinter import Browser
+import os
 from bs4 import BeautifulSoup as bs
+import requests
+from splinter import Browser
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 def init_browser():
@@ -13,26 +16,27 @@ def scrape_info():
     url = 'https://mars.nasa.gov/news/'
     browser.visit(url)
 
-    time.sleep(1)
-
     html = browser.html
     soup = bs(html, "html.parser")
 
-    avg_temps = soup.find('div', id='weather')
+    title_slider = soup.select_one('ul.item_list li.slide')
+    title = title_slider.find('div', class_="content_title").get_text()
+    title
 
-    min_temp = avg_temps.find_all('strong')[0].text
+    paragraph = title_slider.find('div', class_="article_teaser_body").get_text()
+    paragraph
 
-    max_temp = avg_temps.find_all('strong')[1].text
+    image_slider = soup.select_one('li.slide').get_text
+    image_slider
 
-    relative_image_path = soup.find_all('img')[2]["src"]
-    sloth_img = url + relative_image_path
+    img = url + image_slider
 
-    costa_data = {
-        "sloth_img": sloth_img,
-        "min_temp": min_temp,
-        "max_temp": max_temp
+    mars_data = {
+        "Article Title": title,
+        "Article Paragraph": paragraph,
+        "Images": img
     }
 
     browser.quit()
 
-    return costa_data
+    return mars_data
